@@ -1,10 +1,11 @@
-let url = 'https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx';
 let data = [],
     cities = [],
     districts = [];
-const city = document.querySelector('#city'),
+    
+const url = 'https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx',
+      city = document.querySelector('#city'),
       district = document.querySelector('#district'),
-      food = document.querySelector('#food');
+      food = document.querySelector('#food'); 
 
 const init = () => {
   getData();
@@ -14,9 +15,7 @@ const init = () => {
 const getData = async () => {
   try {
     const res = await fetch(url);
-    const parsedData = await res.json();
-    data = parsedData;
-    console.log(data);
+    data = await res.json();
     setFood();
     setBtnCities();
     document.querySelector('#loading').classList.add('js-hidden');
@@ -45,7 +44,7 @@ const setFood = (city, district) => {
               <img class="food__img img-resp" src=${item.PicURL} alt=${item.Name} loading="lazy"/>
             </div>
             <div class="food__filter"></div>
-          </a>
+          ${item.Url && `</a>`}
           </li>`;
       }
     }).join('');
@@ -65,10 +64,10 @@ const setBtnCities = () => {
   city.innerHTML = rendered;
 }
 
-const setBtnDistricts = (str) => {
+const setBtnDistricts = (city) => {
   let locations = [];
   data.forEach(item => {
-    if(str === item.City) {
+    if(city === item.City) {
       if(!locations.includes(item.Town)) {
         locations.push(item.Town);
       }
@@ -85,7 +84,6 @@ const setFilter = () => {
   city.addEventListener('change', () => {
     let filterCity = city.value;
     setFood(filterCity);
-    console.log(filterCity);
     setBtnDistricts(filterCity);
   });
   district.addEventListener('change', () => {
