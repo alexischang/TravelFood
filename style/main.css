@@ -1,0 +1,258 @@
+@charset "utf-8";
+/* --- Global --- */
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, "Microsoft JhengHei", "MingLiU", sans-serif;
+  background-color: #eee;
+}
+
+ h4, h5 {
+  margin: 0;
+}
+
+ul {
+  padding-left: 0;
+}
+
+/* --- Layouts --- */
+/* Content */
+.container {
+  max-width: 1200px;
+}
+
+/* --- Modules --- */
+.title {
+  text-align: center;
+  color: #666;
+}
+
+/* Module filter */
+.filter {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 5rem;
+  padding-left: 270px; /*0.225%*/
+  padding-right: 270px;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.filter__dropdown {
+  width: 40%;
+  height: 40px;
+  padding-left: 15px;
+  border: none;
+  border-radius: 3px;
+  background-color: #eee;
+}
+
+.filter__dropdown-item {
+  border: 0;
+}
+
+/* Module food */
+.food {
+  display: grid;
+  justify-content: space-between;
+  grid-template-columns: repeat(auto-fill, 370px);
+  margin-top: 25px;
+}
+
+.food__item {
+  position: relative;
+  box-sizing: border-box;
+  max-width: 370px;
+  max-height: 200px;
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+.food-transition .food__imgContainer,
+.food-transition .food__desc {
+  transition: all 1s ease-out;
+}
+
+.food__item:hover .food__imgContainer{
+  transform: scale(1.05, 1.05);
+}
+
+.food__item:hover .food__desc{
+  transform: translateY(-40%);
+}
+
+.food__item:hover .food__restaurant::after {
+  content: '';
+  display: block;
+  width: 12%;
+  margin-top: 10px;
+  border-bottom: 3px solid #fff;
+}
+
+.food__desc {
+  position: absolute;
+  z-index: 2;
+  bottom: -30%;
+  margin-left: 10px;
+}
+
+.food__location {
+  font-style: italic;
+  color: #ddd;
+}
+
+.food__restaurant {
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.food__details {
+  color: #fff;
+}
+
+.food__tag {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  padding: 3px 6px;
+  color: #fff;
+  background-color: #e09b00;
+}
+
+.food__filter {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to top,rgba( 0, 0, 0, .5), rgba( 0, 0, 0, .1));
+  background-image: -webkit-linear-gradient(to top, rgba( 0, 0, 0, .3), rgba( 0, 0, 0, .1));
+  background-image:    -moz-linear-gradient(to top, rgba( 0, 0, 0, .3), rgba( 0, 0, 0, .1));
+  background-image:      -o-linear-gradient(to top, rgba( 0, 0, 0, .3), rgba( 0, 0, 0, .1));
+}
+/* Module loading */
+.loading {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  background-color: rgba(0, 0, 0, .7);
+}
+
+.loading__content {
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading__icon-rotate {
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
+  animation: rotate 1s infinite linear;
+}
+
+@keyframes rotate {
+  50% {
+    transform: rotateY(90deg);
+  }
+  100% {
+    transform: rotateY(180deg);
+  }
+}
+
+/* Module footer */
+.footer {
+  text-align: center;
+}
+
+.footer__title {
+  color: #666;
+}
+
+.footer__info {
+  color: #666;
+}
+
+/* ---RWD --- */
+@media screen and (max-width: 1200px) {
+  .container {
+    max-width: 900px;
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+  .food {
+    justify-content: space-around;
+  }
+  
+  .food__item {
+    max-width: 100%;
+  }
+
+  .filter {
+    padding: 10px 10px;
+  }
+}
+@media screen and (max-width: 768px) {
+  .food {
+    display: block;
+  }
+  .food__item {
+    max-width: 100%;
+  }
+}
+@media screen and (max-width: 414px) {
+  .filter {
+    background-color: transparent;
+    flex-direction: column;
+    height: 6rem;
+    padding: 0;
+  }
+  .filter__dropdown {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 15px;
+    background-color: #ddd;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .title {
+    font-size: 1.5rem;
+  }
+  .food__desc {
+    bottom: -40%;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .food__desc {
+    bottom: -50%;
+  }
+  .food__details {
+    font-size: .9rem;
+  }
+}
+
+/* --- Utils --- */
+/* Helper */
+.img-resp {
+  max-width: 100%;
+  height: auto;
+  vertical-align: bottom;
+}
+
+.mx-auto {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.js-hidden {
+  display: none;
+}
