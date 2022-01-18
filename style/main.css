@@ -62,8 +62,8 @@ ul {
   overflow: hidden;
 }
 
-.food-transition .food__imgContainer,
-.food-transition .food__desc {
+.food__item-transition .food__imgContainer,
+.food__item-transition .food__desc {
   transition: all 1s ease-out;
 }
 
@@ -72,21 +72,13 @@ ul {
 }
 
 .food__item:hover .food__desc{
-  transform: translateY(-40%);
-}
-
-.food__item:hover .food__restaurant::after {
-  content: '';
-  display: block;
-  width: 12%;
-  margin-top: 10px;
-  border-bottom: 3px solid #fff;
+  transform: translateY(-55%);
 }
 
 .food__desc {
   position: absolute;
   z-index: 2;
-  bottom: -30%;
+  bottom: -40%;
   margin-left: 10px;
 }
 
@@ -99,6 +91,11 @@ ul {
   margin-bottom: 10px;
   font-weight: 500;
   color: #fff;
+}
+
+.food__underline {
+  width: 12%;
+  border-bottom: 3px solid #fff;
 }
 
 .food__details {

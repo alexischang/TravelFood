@@ -1,14 +1,15 @@
 let data = [],
-    cities = [],
-    districts = [];
-    
-const url = 'https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx',
-      city = document.querySelector('#city'),
-      district = document.querySelector('#district'),
-      food = document.querySelector('#food'); 
+    currentCity='',
+    currentDistrict='';
 
-const init = () => {
-  getData();
+const url = 'https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx',
+      elementCity = document.querySelector('#City'),
+      elementDistrict = document.querySelector('#District'),
+      elementFood = document.querySelector('#Food'); 
+
+const init = async() => {
+  await getData();
+  renderData();
   setFilter();
 }
 
@@ -16,28 +17,33 @@ const getData = async () => {
   try {
     const res = await fetch(url);
     data = await res.json();
-    setFood();
-    setBtnCities();
-    document.querySelector('#loading').classList.add('js-hidden');
   }
   catch(err) {
     console.log(err);
   }
 }
 
-const setFood = (city, district) => {
-  const rendered = data.map( (item) => {
+const renderData = () => {
+  renderFood();
+  renderDropdowns('City');
+  document.querySelector('#Loading').classList.add('js-hidden');
+}
+
+const renderFood = (city, district) => {
+  let str='';
+  data.map( (item) => {
     if(city!==undefined && item.City !== city || district!==undefined && district !== item.Town){
       return;      
     } 
     else {
-      return `
-        <li class="food__item food-transition">
-          ${item.Url && `<a href=${item?.Url} target="_blank">`}
+      return str+=`
+        <li class="food__item food__item-transition">
+          ${item?.Url && `<a href=${item.Url} target="_blank">`}
             <div class="food__desc">
               <h5 class="food__location">${item.Town}</h5>
               <h4 class="food__restaurant">${item.Name}</h4>
-              <pㄑ class="food__details">${item.FoodFeature.substring(0, 43)}</p>
+              <div class="food__underline"></div>
+              <p class="food__details">${item.FoodFeature.substring(0, 43)}</p>
             </div>
             <h5 class="food__tag">${item.City}</h5>
             <div class="food__imgContainer">
@@ -47,49 +53,51 @@ const setFood = (city, district) => {
           ${item.Url && `</a>`}
           </li>`;
       }
-    }).join('');
-  food.innerHTML = rendered;
+    });
+  elementFood.innerHTML = str;
 }
 
-const setBtnCities = () => {
+const getDropdowns = ( keyword, arr) => {
+  keyword === 'City' ?
   data.forEach(item => {
-    if(!cities.includes(item.City)){
-      cities.push(item.City);
+    if(!arr.includes(item.City)){
+      arr.push(item.City);
     }
-  });
-  let rendered = city.innerHTML;
-  for(let i = 0; i < cities.length; i++) {
-    rendered+=`<option class="filter__dropdown-item" id="dropdown-item" value=${cities[i]}>${cities[i]}</option>`;
-  }
-  city.innerHTML = rendered;
-}
-
-const setBtnDistricts = (city) => {
-  let locations = [];
-  data.forEach(item => {
-    if(city === item.City) {
-      if(!locations.includes(item.Town)) {
-        locations.push(item.Town);
+  }) 
+  :data.forEach(item => {
+    if( currentCity === item.City) {
+      if(!arr.includes(item.Town)) {
+        arr.push(item.Town);
       }
     }
-  });
-  let rendered = '<option class="filter__dropdown-item" value="" id="default-option" selected disabled>請選擇鄉鎮區...</option>';
-  for(let i = 0; i < locations.length; i++) {
-    rendered+=`<option class="filter__dropdown-item" id="dropdown-item" value=${locations[i]}>${locations[i]}</option>`;
-  }
-  district.innerHTML = rendered;
+  })
+  return arr;
 }
 
+const renderDropdowns = (keyword) => {
+  let arr = [];
+  arr = getDropdowns(keyword, arr);
+  let renderedData = keyword === 'City'? elementCity.innerHTML:'<option class="filter__dropdown-item" value="" id="default-option" selected disabled>請選擇鄉鎮區...</option>';
+  arr.map(item => {
+    renderedData+=`<option class="filter__dropdown-item" id="dropdown-item" value=${item}>${item}</option>`;
+  })
+  if(keyword==='City') {
+    elementCity.innerHTML = renderedData;
+  }
+  else {
+    elementDistrict.innerHTML = renderedData;
+  }
+} 
+
 const setFilter = () => {
-  city.addEventListener('change', () => {
-    let filterCity = city.value;
-    setFood(filterCity);
-    setBtnDistricts(filterCity);
+  elementCity.addEventListener('change', () => {
+    currentCity = elementCity.value;
+    renderFood(currentCity);
+    renderDropdowns('Town');
   });
-  district.addEventListener('change', () => {
-    let filterCity = city.value;
-    let filterDistrict = district.value;
-    setFood(filterCity,filterDistrict);
+  elementDistrict.addEventListener('change', () => {
+    currentDistrict = elementDistrict.value;
+    renderFood(currentCity,currentDistrict);
   });
 }
 
