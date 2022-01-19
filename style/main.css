@@ -221,13 +221,16 @@ ul {
     font-size: 1.5rem;
   }
   .food__desc {
-    bottom: -40%;
+    bottom: -50%;
+  }
+  .food__item:hover .food__desc{
+    transform: translateY(-45%);
   }
 }
 
 @media screen and (max-width: 320px) {
   .food__desc {
-    bottom: -50%;
+    bottom: -55%;
   }
   .food__details {
     font-size: .9rem;

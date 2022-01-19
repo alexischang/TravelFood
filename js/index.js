@@ -43,7 +43,7 @@ const renderFood = (city, district) => {
               <h5 class="food__location">${item.Town}</h5>
               <h4 class="food__restaurant">${item.Name}</h4>
               <div class="food__underline"></div>
-              <p class="food__details">${item.FoodFeature.substring(0, 43)}</p>
+              <p class="food__details">${item.FoodFeature.substring(0, 43)}...</p>
             </div>
             <h5 class="food__tag">${item.City}</h5>
             <div class="food__imgContainer">
