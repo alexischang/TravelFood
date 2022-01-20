@@ -8,28 +8,68 @@
   <title>農村地方美食小吃特色料理</title>
   <meta name="description" content="臺灣是多元族群與文化的社會，追求互相融合，體現最完整的地方就在飲食文化。想深刻體驗臺灣的文化，就從品嘗在地小吃開始吧!">
   <meta name="keywords" content="地方美食 特色小吃">
+  <link rel="icon" type="image/x-icon" href="/imgs/favicon.ico">
   <link rel="stylesheet" href="./style/main.css">
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous" />
   <script defer src="./js/index.js"></script>
 </head>
 
 <body>
   <div class="container mx-auto">
     <h1 class="title">農村地方美食小吃特色料理</h1>
-    <section class="filter">
-      <select class="filter__dropdown" id="City">
-        <option class="filter__dropdownItem" value="" selected disabled>請選擇行政區域...</option>
-      </select>
-      <select class="filter__dropdown" id="District">
-        <option class="filter__dropdownItem" value="" selected disabled>請選擇鄉鎮區...</option>
-      </select>
-    </section>
-    <ul class="food food-transition row" id="Food">
-    </ul>
-    <footer class="footer">
-      <p class="footer__title">政府資料開放平台</p>
-      <a class="footer__info" href="https://data.gov.tw/dataset/6037" target="_blank">https://data.gov.tw/dataset/6037</a>
-    </footer>
+    <div class="body">
+      <main class="main">
+        <header class="head">
+          <div class="filter">
+            <select class="filter__dropdown" id="City">
+              <option class="filter__dropdownItem" value="" selected disabled>請選擇行政區域...</option>
+            </select>
+            <select class="filter__dropdown" id="District">
+              <option class="filter__dropdownItem" value="" selected disabled>請選擇鄉鎮區...</option>
+            </select>
+          </div>
+          <div class="viewmode">
+            <span class="viewmode__desc">檢視模式:</span>
+            <i class="icon fas fa-th-list icon-active"></i>
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-th-large"></i>
+          </div>
+        </header>
+        <ul class="food food-transition row" id="Food">
+        </ul>
+        <div class="pagination">
+          <div class="pagination__desc">
+            <span class="pagination__text">美食頁次</span>
+            <span class="pagination__currentPage">1</span>
+            <span class="pagination__pagesCount">/14</span>
+          </div>
+          <div class="pagination__content" id="Pages">
+          </div>
+        </div>
+      </main>
+      <aside class="side">
+        <div class="box">
+          <img class="box__img img-resp" src="./imgs/adv1.png" alt="Google Pixel 4" width="300" height="599">
+        </div>
+        <div class="box">
+          <img class="box__img img-resp" src="./imgs/adv2.png" alt="股市阿水-飆股狙擊室" width="300" height="208">
+        </div>
+        <div class="box">
+          <img class="box__img img-resp" src="./imgs/adv3.png" alt="森聯摩天41-林口最高森林宅" width="300" height="600">
+        </div>
+      </aside>
+    </div>
   </div>
+  <footer class="footer">
+    <div class="container mx-auto">
+      <p class="footer__title">CMoney 全曜財經資訊</p>
+      <div class="footer__info">
+        <span class="footer__details">資料來源 : </span>
+        <a class="footer__link" href="https://data.gov.tw/dataset/6037" target="_blank">政府資料開放平台</a>
+      </div>
+    </div>
+  </footer>
   <div class="loading" id="Loading">
     <div class="loading__content">
       <div class="loading__icon-rotate"></div>

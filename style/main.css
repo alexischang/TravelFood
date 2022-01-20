@@ -15,36 +15,56 @@ ul {
   list-style-type: none;
 }
 
+a {
+  text-decoration: none;
+}
+
 /* --- Layouts --- */
 .container {
   max-width: 1200px;
 }
 
+.body {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main {
+  width: 74%;
+}
+
+.side {
+  width: 23%;
+}
+
 /* --- Modules --- */
 .title {
   text-align: center;
-  color: #666;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Module filter */
-.filter {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  height: 5rem;
-  padding-left: 270px;
-  padding-right: 270px;
-  border-radius: 5px;
-  background-color: #fff;
-}
-
 .filter__dropdown {
-  width: 40%;
-  height: 40px;
-  padding-left: 15px;
+  padding: 10px;
+  margin-right: 10px;
   border: none;
   border-radius: 3px;
-  background-color: #eee;
+  font-size: 1rem;
+  background-color: #d6d6d6;
+}
+
+/* Module viewmode */
+.viewmode {
+  font-size: 20px;
+}
+
+.viewmode__desc {
+  color: #999;
 }
 
 /* Module food */
@@ -55,7 +75,7 @@ ul {
 }
 
 .food__item {
-  width: 33.3333%;
+  width: 50%;
   padding: 15px;
   box-sizing: border-box;
 
@@ -73,7 +93,7 @@ ul {
 }
 
 .food__gutter:hover .food__imgContainer{
-  transform: scale(1.05, 1.05);
+  transform: scale(1.3, 1.3);
 }
 
 .food__gutter:hover .food__desc{
@@ -90,8 +110,12 @@ ul {
 
 .food__location {
   padding-right: 10px;
-  padding-bottom: 33px;
-  border-bottom: 3px solid #fff;
+  padding-bottom: 5px;
+}
+
+.food__district {
+  /* padding-right: 10px;
+  padding-bottom: 33px; */
   font-size: .9rem;
   font-style: italic;
   color: #ddd;
@@ -111,14 +135,10 @@ ul {
 }
 
 .food__tag {
-  position: absolute;
-  z-index: 2;
-  top: 0;
-  left: 0;
   padding: 3px 6px;
   font-size: .9rem;
   color: #fff;
-  background-color: #e09b00;
+  background-color: #00b3e7;
 }
 
 /* Image */
@@ -168,18 +188,67 @@ ul {
   }
 }
 
+/* Module Pages */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn {
+  all: unset;
+  margin-left: 5px;
+  padding: 10px 13px;
+  color: #aaa;
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+.js-active {
+  color: #fff;
+  background-color: #00b3e7;
+  cursor: auto;
+}
+
+/* Module Box */
+.box {
+  margin-bottom: 15px;
+}
+
+/* Module Icon */
+.fas {
+  padding-left: 10px;
+  color:#666;
+  cursor: pointer;
+}
+.icon-active {
+  color: #000;
+}
+
 /* Module footer */
 .footer {
-  text-align: center;
+  padding-top: 1rem;
   padding-bottom: 1rem;
+  background-color: #999;
 }
 
 .footer__title {
-  color: #666;
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ccc;
 }
 
 .footer__info {
-  color: #666;
+  font-size: .8rem;
+}
+
+.footer__details {
+  color: #ccc;
+}
+
+.footer__link {
+  color: #fff;
 }
 
 /* ---RWD --- */
