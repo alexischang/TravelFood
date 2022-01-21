@@ -1,7 +1,7 @@
 let data = [],
   pages,
   dataCounts,
-  mode = 'list',
+  mode = 0,
   currentPage = 1,
   pageRange = 10,
   currentCity = '',
@@ -10,10 +10,11 @@ let data = [],
 const url = 'https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx',
   elementCity = document.querySelector('#City'),
   elementDistrict = document.querySelector('#District'),
-  elementFood = document.querySelector('#Food'),
+  elementContent = document.querySelector('#Content'),
   elementPages = document.querySelector('#Pages'),
   elementCurrentPage = document.querySelector('#CurrentPage'),
-  elementTotalPage = document.querySelector('#TotalPage');
+  elementTotalPage = document.querySelector('#TotalPage'),
+  elementIcons = document.querySelector('#Icon');
 
 const init = async () => {
   await getData();
@@ -33,26 +34,52 @@ const getData = async () => {
 }
 
 const renderData = () => {
-  pages = Math.ceil(data.length / 10);
-  elementFood.innerHTML = setFood();
+  pages = Math.ceil(dataCounts / 10);
+  elementContent.innerHTML = setFood();
   elementCity.innerHTML = makeDropdownHtml('City');
-  makePaginationHtml();
+  renderPages();
   document.querySelector('#Loading').classList.add('js-hidden');
 }
 
-const makePaginationHtml = () => {
+const renderPages = () => {
+  elementPages.innerHTML = makePaginationHtml();
+  setPages();
+}
+const makePaginationHtml = (str = '') => {
   len = Math.ceil(dataCounts / pageRange);
-  let str = '';
   for (let i = 0; i < len; i++) {
     str += currentPage === i + 1
-      ? `<button class="btn js-active" data-num=${i + 1} type="button">${i + 1}</button>`
-      : `<button class="btn" data-num=${i + 1} type="button">${i + 1}</button>`;
+      ? `<button class="btn js-active" type="button">${i + 1}</button>`
+      : `<button class="btn" type="button">${i + 1}</button>`;
   };
-  elementPages.innerHTML = str;
   elementCurrentPage.textContent = currentPage;
   elementTotalPage.textContent = `/${len}`;
-  setPages();
+  return str;
+}
 
+const setPages = () => {
+  elementBtns = [...elementPages.querySelectorAll('.btn')];
+  elementBtns.map((item, index) => {
+    item.addEventListener('click', () => {
+      if (index + 1 === currentPage) {
+        return;
+      }
+      elementBtns[currentPage - 1].classList.remove('js-active');
+      currentPage = index + 1;
+      elementBtns[currentPage - 1].classList.add('js-active');
+      elementContent.innerHTML = setFood();
+      elementCurrentPage.textContent = currentPage;
+    })
+  })
+}
+
+const setFood = (arr = []) => {
+  arr = filterFood();
+  const index = currentPage - 1;
+  arr = index * 10 + pageRange >= arr.length
+    ? setPageFood(index * 10, arr.length, arr)
+    : setPageFood(index * 10, index * 10 + pageRange, arr);
+  return makeFoodHtml(arr);
 }
 
 const filterFood = (arr = []) => {
@@ -77,18 +104,7 @@ const filterFood = (arr = []) => {
   return arr;
 }
 
-const setFood = (arr = []) => {
-  arr = filterFood();
-  console.log(arr);
-  console.log(dataCounts);
-  const index = currentPage - 1;
-  arr = index * 10 + pageRange >= arr.length
-    ? filterPageFood(index * 10, arr.length, arr)
-    : filterPageFood(index * 10, index * 10 + pageRange, arr);
-  return makeFoodHtml(arr);
-}
-
-const filterPageFood = (first, last, arr, result = []) => {
+const setPageFood = (first, last, arr, result = []) => {
   for (let i = first; i < last; i++) {
     result.push(arr[i]);
   }
@@ -96,45 +112,78 @@ const filterPageFood = (first, last, arr, result = []) => {
 }
 
 const makeFoodHtml = (arr) => {
-  let str = '';
   switch (mode) {
-    case 'table':
-      break;
-    case 'card':
-      break;
-    case 'list':
-    default:
+    case 0:
+      return makeListHtml(arr);
+    case 1:
+      return makeTableHtml(arr);
+    case 2:
       return makeCardHtml(arr);
+    default:
+      return makeListHtml(arr);
   }
 }
-const makeListHtml = (arr, str = '') => {
-  arr.map((item) => {
+
+const makeTableHtml = (arr) => {
+  str=`
+    <table class="table" id="Table">
+    <thead class="table__head">
+      <tr class="table__headList">
+        <th class="table__headItem">編號</th>
+        <th class="table__headItem">行政區</th>
+        <th class="table__headItem">鄉鎮區</th>
+        <th class="table__headItem">商家</th>
+        <th class="table__headItem">地址</th>
+      </tr>
+    </thead>
+    <tbody class="table__body">`;
+  arr.map((item, index) => {
+    let id = (currentPage-1)*10 + index + 1;
     str += `
-      <li class="card__item">
-        <div class="card__gutter">
-          ${item?.Url && `<a href="${item.Url}" target="_blank">`}
-            <div class="card__desc">
-              <div class="card__location">
-                <span class="card__tag">${item.City}</span>
-                <span class="card__district">${item.Town}</span>
-              </div>
-              <h2 class="card__restaurant">${item.Name}</h2>
-              <p class="card__details">${item.FoodFeature.substring(0, 43)}...</p>
-            </div>
-            <div class="card__imgContainer">
-              <div class="card__img" 
-                style="background-image: linear-gradient(to top,rgba( 0, 0, 0, .5), rgba( 0, 0, 0, .1)), url(${item.PicURL})">
-                ${item.Name}
-              </div>
-            </div>
-          ${item.Url && `</a>`}
-        <div>
-      </li>`;
+      <tr class="table__item">
+        <td class="table__id">${id}</td>
+        <td class="table__tag">${item.City}</td>
+        <td class="table__district">${item.Town}</td>
+        <td class="table__restaurant">${item.Name}</td>
+        <td class="table__address">
+          ${item.Address.length > 23 
+            ? item.Address.substring(0, 23)+'...'
+            : item.Address}
+        </td>
+      </tr>`;
   });
+  str+=`</tbody></table>`;
   return str;
 }
 
-const makeCardHtml = (arr, str = '') => {
+const makeListHtml = (arr) => {
+  str=`<ul class="food food-transition" id="Food">`;
+  arr.map((item) => {
+    str += `
+      <li class="list__item">
+        ${item?.Url && `<a class="list__link" href="${item.Url}" target="_blank">`}
+          <div class="list__innerBox">
+            <div class="list__desc">
+              <h2 class="list__restaurant">${item.Name}</h2>
+              <div class="list__location">
+                <span class="list__tag">${item.City}</span>
+                <span class="list__district">${item.Town}</span>
+              </div>
+              <p class="list__details">${item.FoodFeature.substring(0, 100)}...</p>
+            </div>
+            <div class="list__imgContainer">
+              <img class="list__img img-resp" src=${item.PicURL} alt=${item.Name} width="248" height="144" loading="lazy">
+            </div>
+          </div>
+        ${item.Url && `</a>`}
+      </li>`;
+  });
+  str+=`</ul>`;
+  return str;
+}
+
+const makeCardHtml = (arr) => {
+  str=`<ul class="food food-transition row" id="Food">`;
   arr.map((item) => {
     str += `
       <li class="card__item">
@@ -155,6 +204,7 @@ const makeCardHtml = (arr, str = '') => {
         <div>
       </li>`;
   });
+  str+=`</ul>`;
   return str;
 }
 
@@ -189,7 +239,7 @@ const makeDropdownHtml = (keyword, arr = []) => {
 const setEvent = () => {
   elementCity.addEventListener('change', setDropdowns);
   elementDistrict.addEventListener('change', setDropdowns);
-  // setPages();
+  setIcons();
 }
 
 const setDropdowns = (e) => {
@@ -197,33 +247,29 @@ const setDropdowns = (e) => {
     currentCity = elementCity.value;
     currentDistrict = '';
     currentPage = 1;
-    elementFood.innerHTML = setFood();
-    makePaginationHtml();
+    elementContent.innerHTML = setFood();
+    renderPages();
     elementDistrict.innerHTML = makeDropdownHtml('Town');
   }
   else {
     currentDistrict = elementDistrict.value;
     currentPage = 1;
-    elementFood.innerHTML = setFood();
-    makePaginationHtml();
+    elementContent.innerHTML = setFood();
+    renderPages();
 
   }
 }
-const setPages = () => {
-  elementBtns = elementPages.querySelectorAll('.btn');
-  console.log(elementBtns)
-  for (let i = 0; i < elementBtns.length; i++) {
-    elementBtns[i].addEventListener('click', () => {
-      if (i + 1 === currentPage) {
-        return;
-      }
-      elementBtns[currentPage - 1].classList.remove('js-active');
-      currentPage = i + 1;
-      elementBtns[currentPage - 1].classList.add('js-active');
-      elementFood.innerHTML = setFood();
-      elementCurrentPage.textContent = currentPage;
+
+const setIcons = () => {
+  elementAllIcons = [...elementIcons.querySelectorAll('.fas')];
+  elementAllIcons.map((item, index) => {
+    item.addEventListener('click', (e) => {
+      elementAllIcons[mode].classList.remove('js-text-dark');
+      mode = index;
+      elementAllIcons[mode].classList.add('js-text-dark');
+      elementContent.innerHTML = setFood();
     })
-  }
+  })
 }
 
 init();
