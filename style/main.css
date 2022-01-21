@@ -435,7 +435,7 @@ a {
     margin-bottom: 10px;
   }
 
-  .table {
+  .table__container {
     overflow-x: auto;
     white-space: nowrap;
   }

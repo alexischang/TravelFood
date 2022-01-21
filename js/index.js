@@ -124,19 +124,7 @@ const makeFoodHtml = (arr) => {
   }
 }
 
-const makeTableHtml = (arr) => {
-  str=`
-    <table class="table" id="Table">
-    <thead class="table__head">
-      <tr class="table__headList">
-        <th class="table__headItem">編號</th>
-        <th class="table__headItem">行政區</th>
-        <th class="table__headItem">鄉鎮區</th>
-        <th class="table__headItem">商家</th>
-        <th class="table__headItem">地址</th>
-      </tr>
-    </thead>
-    <tbody class="table__body">`;
+const makeTableHtml = (arr, str='') => {
   arr.map((item, index) => {
     let id = (currentPage-1)*10 + index + 1;
     str += `
@@ -152,12 +140,22 @@ const makeTableHtml = (arr) => {
         </td>
       </tr>`;
   });
-  str+=`</tbody></table>`;
-  return str;
+  return `
+  <div class="table__container">
+  <table class="table" id="Table">
+  <thead class="table__head">
+    <tr class="table__headList">
+      <th class="table__headItem">編號</th>
+      <th class="table__headItem">行政區</th>
+      <th class="table__headItem">鄉鎮區</th>
+      <th class="table__headItem">商家</th>
+      <th class="table__headItem">地址</th>
+    </tr>
+  </thead>
+  <tbody class="table__body">${str}</tbody></table></div>`;
 }
 
-const makeListHtml = (arr) => {
-  str=`<ul class="food food-transition" id="Food">`;
+const makeListHtml = (arr, str='') => {
   arr.map((item) => {
     str += `
       <li class="list__item">
@@ -178,12 +176,10 @@ const makeListHtml = (arr) => {
         ${item.Url && `</a>`}
       </li>`;
   });
-  str+=`</ul>`;
-  return str;
+  return `<ul class="food food-transition" id="Food">${str}</ul>`;
 }
 
-const makeCardHtml = (arr) => {
-  str=`<ul class="food food-transition row" id="Food">`;
+const makeCardHtml = (arr, str='') => {
   arr.map((item) => {
     str += `
       <li class="card__item">
@@ -204,8 +200,7 @@ const makeCardHtml = (arr) => {
         <div>
       </li>`;
   });
-  str+=`</ul>`;
-  return str;
+  return `<ul class="food food-transition row" id="Food">${str}</ul>`;
 }
 
 const getDropdowns = (keyword, arr) => {
