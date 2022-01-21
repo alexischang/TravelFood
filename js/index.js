@@ -1,6 +1,7 @@
 let data = [],
   pages,
-  dataCounts=0,
+  dataCounts,
+  mode = 'list',
   currentPage = 1,
   pageRange = 10,
   currentCity = '',
@@ -10,7 +11,9 @@ const url = 'https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx
   elementCity = document.querySelector('#City'),
   elementDistrict = document.querySelector('#District'),
   elementFood = document.querySelector('#Food'),
-  elementPages = document.querySelector('#Pages');
+  elementPages = document.querySelector('#Pages'),
+  elementCurrentPage = document.querySelector('#CurrentPage'),
+  elementTotalPage = document.querySelector('#TotalPage');
 
 const init = async () => {
   await getData();
@@ -30,7 +33,7 @@ const getData = async () => {
 }
 
 const renderData = () => {
-  pages = Math.ceil(data.length/10);
+  pages = Math.ceil(data.length / 10);
   elementFood.innerHTML = setFood();
   elementCity.innerHTML = makeDropdownHtml('City');
   makePaginationHtml();
@@ -40,12 +43,14 @@ const renderData = () => {
 const makePaginationHtml = () => {
   len = Math.ceil(dataCounts / pageRange);
   let str = '';
-  for(let i = 0; i < len; i++) {
-    str += currentPage===i+1 
-      ? `<button class="btn js-active" data-num=${i+1} type="button">${i+1}</button>`
-      : `<button class="btn" data-num=${i+1} type="button">${i+1}</button>`;
-  }
+  for (let i = 0; i < len; i++) {
+    str += currentPage === i + 1
+      ? `<button class="btn js-active" data-num=${i + 1} type="button">${i + 1}</button>`
+      : `<button class="btn" data-num=${i + 1} type="button">${i + 1}</button>`;
+  };
   elementPages.innerHTML = str;
+  elementCurrentPage.textContent = currentPage;
+  elementTotalPage.textContent = `/${len}`;
   setPages();
 
 }
@@ -55,15 +60,15 @@ const filterFood = (arr = []) => {
     data.map(item => {
       if (item.Town === currentDistrict) {
         arr.push(item);
-      }
-    })
+      };
+    });
   }
   else if (currentCity) {
     data.map(item => {
       if (item.City === currentCity) {
         arr.push(item);
-      }
-    })
+      };
+    });
   }
   else {
     arr = data;
@@ -76,15 +81,15 @@ const setFood = (arr = []) => {
   arr = filterFood();
   console.log(arr);
   console.log(dataCounts);
-  const index = currentPage-1;
-  arr = index*10 + pageRange >= arr.length 
-    ? filterPageFood(index*10, arr.length, arr)
-    : filterPageFood(index*10, index*10 + pageRange, arr);
+  const index = currentPage - 1;
+  arr = index * 10 + pageRange >= arr.length
+    ? filterPageFood(index * 10, arr.length, arr)
+    : filterPageFood(index * 10, index * 10 + pageRange, arr);
   return makeFoodHtml(arr);
 }
 
-const filterPageFood = (first, last, arr, result=[]) => {
-  for(let i = first; i < last; i++) {
+const filterPageFood = (first, last, arr, result = []) => {
+  for (let i = first; i < last; i++) {
     result.push(arr[i]);
   }
   return result;
@@ -92,24 +97,59 @@ const filterPageFood = (first, last, arr, result=[]) => {
 
 const makeFoodHtml = (arr) => {
   let str = '';
+  switch (mode) {
+    case 'table':
+      break;
+    case 'card':
+      break;
+    case 'list':
+    default:
+      return makeCardHtml(arr);
+  }
+}
+const makeListHtml = (arr, str = '') => {
   arr.map((item) => {
     str += `
-      <li class="food__item">
-        <div class="food__gutter">
+      <li class="card__item">
+        <div class="card__gutter">
           ${item?.Url && `<a href="${item.Url}" target="_blank">`}
-            <div class="food__desc">
-              <div class="food__location">
-                <span class="food__tag">${item.City}</span>
-                <span class="food__district">${item.Town}</span>
+            <div class="card__desc">
+              <div class="card__location">
+                <span class="card__tag">${item.City}</span>
+                <span class="card__district">${item.Town}</span>
               </div>
-              <h2 class="food__restaurant">${item.Name}</h2>
-              <p class="food__details">${item.FoodFeature.substring(0, 43)}...</p>
+              <h2 class="card__restaurant">${item.Name}</h2>
+              <p class="card__details">${item.FoodFeature.substring(0, 43)}...</p>
             </div>
-            <div class="food__imgContainer">
-              <div class="food__img" 
+            <div class="card__imgContainer">
+              <div class="card__img" 
                 style="background-image: linear-gradient(to top,rgba( 0, 0, 0, .5), rgba( 0, 0, 0, .1)), url(${item.PicURL})">
                 ${item.Name}
               </div>
+            </div>
+          ${item.Url && `</a>`}
+        <div>
+      </li>`;
+  });
+  return str;
+}
+
+const makeCardHtml = (arr, str = '') => {
+  arr.map((item) => {
+    str += `
+      <li class="card__item">
+        <div class="card__gutter">
+          ${item?.Url && `<a class="card__link" href="${item.Url}" target="_blank">`}
+            <div class="card__desc">
+              <div class="card__location">
+                <span class="card__tag">${item.City}</span>
+                <span class="card__district">${item.Town}</span>
+              </div>
+              <h2 class="card__restaurant">${item.Name}</h2>
+              <p class="card__details">${item.FoodFeature.substring(0, 43)}...</p>
+            </div>
+            <div class="card__imgContainer">
+              <img class="card__img img-resp" src=${item.PicURL} alt=${item.Name} loading="lazy">  
             </div>
           ${item.Url && `</a>`}
         <div>
@@ -156,34 +196,32 @@ const setDropdowns = (e) => {
   if (e.target.id === 'City') {
     currentCity = elementCity.value;
     currentDistrict = '';
-    // makePaginationHtml();
     currentPage = 1;
     elementFood.innerHTML = setFood();
     makePaginationHtml();
     elementDistrict.innerHTML = makeDropdownHtml('Town');
-    // makePaginationHtml();
   }
   else {
     currentDistrict = elementDistrict.value;
-    // currentPage = 1;
-    makePaginationHtml();
+    currentPage = 1;
     elementFood.innerHTML = setFood();
-    // makePaginationHtml();
+    makePaginationHtml();
 
   }
 }
 const setPages = () => {
   elementBtns = elementPages.querySelectorAll('.btn');
   console.log(elementBtns)
-  for(let i = 0; i < elementBtns.length; i++) {
+  for (let i = 0; i < elementBtns.length; i++) {
     elementBtns[i].addEventListener('click', () => {
-      if(i+1 === currentPage) {
+      if (i + 1 === currentPage) {
         return;
       }
-      elementBtns[currentPage-1].classList.remove('js-active');
-      currentPage = i+1;
-      elementBtns[currentPage-1].classList.add('js-active');
-      elementFood.innerHTML = setFood(); 
+      elementBtns[currentPage - 1].classList.remove('js-active');
+      currentPage = i + 1;
+      elementBtns[currentPage - 1].classList.add('js-active');
+      elementFood.innerHTML = setFood();
+      elementCurrentPage.textContent = currentPage;
     })
   }
 }
