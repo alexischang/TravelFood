@@ -145,7 +145,7 @@ const makeTableHtml = (arr) => {
         <td class="table__tag">${item.City}</td>
         <td class="table__district">${item.Town}</td>
         <td class="table__restaurant">${item.Name}</td>
-        <td class="table__address">
+        <td class="table__address" title="${item.Address}">
           ${item.Address.length > 23 
             ? item.Address.substring(0, 23)+'...'
             : item.Address}
