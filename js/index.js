@@ -1,6 +1,6 @@
 let data = [],
-  pages,
-  dataCounts,
+  currentData = [],
+  pageCounts,
   mode = 0,
   currentPage = 1,
   pageRange = 10,
@@ -26,7 +26,6 @@ const getData = async () => {
   try {
     const res = await fetch(url);
     data = await res.json();
-    dataCounts = data.length;
   }
   catch (err) {
     console.log(err);
@@ -34,80 +33,75 @@ const getData = async () => {
 }
 
 const renderData = () => {
-  pages = Math.ceil(dataCounts / 10);
-  elementContent.innerHTML = setFood();
+  filterFood();
+  elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
   elementCity.innerHTML = makeDropdownHtml('City');
-  renderPages();
+  elementPages.innerHTML = makePaginationHtml();
   document.querySelector('#Loading').classList.add('js-hidden');
 }
 
-const renderPages = () => {
-  elementPages.innerHTML = makePaginationHtml();
-  setPages();
-}
 const makePaginationHtml = (str = '') => {
-  len = Math.ceil(dataCounts / pageRange);
-  for (let i = 0; i < len; i++) {
+  for (let i = 0; i < pageCounts; i++) {
     str += currentPage === i + 1
-      ? `<button class="btn js-active" type="button">${i + 1}</button>`
-      : `<button class="btn" type="button">${i + 1}</button>`;
+      ? `<button class="btn js-active" type="button" data-index=${i+1}>${i + 1}</button>`
+      : `<button class="btn" type="button" data-index=${i+1}>${i + 1}</button>`;
   };
   elementCurrentPage.textContent = currentPage;
-  elementTotalPage.textContent = `/${len}`;
+  elementTotalPage.textContent = `/${pageCounts}`;
   return str;
 }
 
-const setPages = () => {
-  elementPages.addEventListener('click', setClickPages);
-}
-
 const setClickPages = (e) => {
-  if (parseInt(e.target.innerText) === currentPage) {
+  if (e.target.nodeName !== 'BUTTON' || parseInt(e.target.dataset.index) === currentPage) {
     return;
   }
   elementPages.children[currentPage - 1].classList.remove('js-active');
-  currentPage = parseInt(e.target.innerText);
+  currentPage = parseInt(e.target.dataset.index);
   elementPages.children[currentPage - 1].classList.add('js-active');
-  elementContent.innerHTML = setFood();
+  elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
   elementCurrentPage.textContent = currentPage;
 }
 
-const setFood = (arr = []) => {
-  arr = filterFood();
-  const index = currentPage - 1;
-  arr = index * 10 + pageRange >= arr.length
-    ? setPageFood(index * 10, arr.length, arr)
-    : setPageFood(index * 10, index * 10 + pageRange, arr);
-  return makeFoodHtml(arr);
-}
-
-const filterFood = (arr = []) => {
+const filterFood = (innerArr = [], count = 1) => {
+  currentData = [];
   if (currentCity && currentDistrict) {
     data.map(item => {
       if (item.Town === currentDistrict) {
-        arr.push(item);
+        innerArr.push(item);
+        if(count % pageRange === 0) {
+          currentData[count / pageRange -1] = innerArr;
+          innerArr = [];
+        }
+        count++;
       };
     });
   }
   else if (currentCity) {
     data.map(item => {
       if (item.City === currentCity) {
-        arr.push(item);
+        innerArr.push(item);
+        if(count % pageRange === 0) {
+          currentData[count / pageRange -1] = innerArr;
+          innerArr = [];
+        }
+        count++;
       };
     });
   }
   else {
-    arr = data;
+    data.map((item) => {
+      innerArr.push(item);
+      if(count % pageRange === 0) {
+        currentData[count / pageRange -1] = innerArr;
+        innerArr = [];
+      }
+      count++;
+    })
   }
-  dataCounts = arr.length;
-  return arr;
-}
-
-const setPageFood = (first, last, arr, result = []) => {
-  for (let i = first; i < last; i++) {
-    result.push(arr[i]);
+  if(innerArr.length!==0) {
+    currentData[Math.ceil(count/pageRange -1)] = innerArr;
   }
-  return result;
+  pageCounts = currentData.length;
 }
 
 const makeFoodHtml = (arr) => {
@@ -141,7 +135,7 @@ const makeTableHtml = (arr, str = '') => {
   });
   return `
     <div class="table">
-      <table class="table__container" id="Table">
+      <table class="table__container">
         <thead class="table__head">
           <tr class="table__headList">
             <th class="table__headItem">編號</th>
@@ -177,7 +171,7 @@ const makeListHtml = (arr, str = '') => {
         ${item.Url && `</a>`}
       </li>`;
   });
-  return `<ul class="list list-transition" id="Food">${str}</ul>`;
+  return `<ul class="list list-transition">${str}</ul>`;
 }
 
 const makeCardHtml = (arr, str = '') => {
@@ -201,7 +195,7 @@ const makeCardHtml = (arr, str = '') => {
         <div>
       </li>`;
   });
-  return `<ul class="card card-transition row" id="Food">${str}</ul>`;
+  return `<ul class="card card-transition row">${str}</ul>`;
 }
 
 const getDropdowns = (keyword, arr) => {
@@ -235,7 +229,8 @@ const makeDropdownHtml = (keyword, arr = []) => {
 const setEvent = () => {
   elementCity.addEventListener('change', setDropdowns);
   elementDistrict.addEventListener('change', setDropdowns);
-  setIcons();
+  elementIcons.addEventListener('click', setClickIcons);
+  elementPages.addEventListener('click', setClickPages);
 }
 
 const setDropdowns = (e) => {
@@ -243,28 +238,25 @@ const setDropdowns = (e) => {
     currentCity = elementCity.value;
     currentDistrict = '';
     currentPage = 1;
-    elementContent.innerHTML = setFood();
-    renderPages();
+    filterFood();
+    elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
+    elementPages.innerHTML = makePaginationHtml();
     elementDistrict.innerHTML = makeDropdownHtml('Town');
   }
   else {
     currentDistrict = elementDistrict.value;
     currentPage = 1;
-    elementContent.innerHTML = setFood();
-    renderPages();
-
+    filterFood();
+    elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
+    elementPages.innerHTML = makePaginationHtml();
   }
-}
-
-const setIcons = () => {
-  elementIcons.addEventListener('click', setClickIcons);
 }
 
 const setClickIcons = (e) => {
   elementIcons.children[mode].classList.remove('js-text-dark');
   mode = parseInt(e.target.dataset.mode);
   elementIcons.children[mode].classList.add('js-text-dark');
-  elementContent.innerHTML = setFood();
+  elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
 };
 
 init();
