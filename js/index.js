@@ -1,6 +1,5 @@
 let data = [],
   currentData = [],
-  pageCounts,
   mode = 0,
   currentPage = 1,
   pageRange = 10,
@@ -34,20 +33,20 @@ const getData = async () => {
 
 const renderData = () => {
   filterFood();
-  elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
+  elementContent.innerHTML = makeFoodHtml(currentData[currentPage - 1]);
   elementCity.innerHTML = makeDropdownHtml('City');
   elementPages.innerHTML = makePaginationHtml();
   document.querySelector('#Loading').classList.add('js-hidden');
 }
 
-const makePaginationHtml = (str = '') => {
-  for (let i = 0; i < pageCounts; i++) {
+const makePaginationHtml = (str = '', len = currentData.length) => {
+  for (let i = 0; i < len; i++) {
     str += currentPage === i + 1
-      ? `<button class="btn js-active" type="button" data-index=${i+1}>${i + 1}</button>`
-      : `<button class="btn" type="button" data-index=${i+1}>${i + 1}</button>`;
+      ? `<button class="btn js-active" type="button" data-index=${i + 1}>${i + 1}</button>`
+      : `<button class="btn" type="button" data-index=${i + 1}>${i + 1}</button>`;
   };
   elementCurrentPage.textContent = currentPage;
-  elementTotalPage.textContent = `/${pageCounts}`;
+  elementTotalPage.textContent = `/${len}`;
   return str;
 }
 
@@ -58,50 +57,40 @@ const setClickPages = (e) => {
   elementPages.children[currentPage - 1].classList.remove('js-active');
   currentPage = parseInt(e.target.dataset.index);
   elementPages.children[currentPage - 1].classList.add('js-active');
-  elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
+  elementContent.innerHTML = makeFoodHtml(currentData[currentPage - 1]);
   elementCurrentPage.textContent = currentPage;
 }
 
-const filterFood = (innerArr = [], count = 1) => {
+const filterFood = (arr = [], innerArr = [], count = 1) => {
   currentData = [];
   if (currentCity && currentDistrict) {
     data.map(item => {
       if (item.Town === currentDistrict) {
-        innerArr.push(item);
-        if(count % pageRange === 0) {
-          currentData[count / pageRange -1] = innerArr;
-          innerArr = [];
-        }
-        count++;
+        arr.push(item);
       };
     });
   }
   else if (currentCity) {
     data.map(item => {
       if (item.City === currentCity) {
-        innerArr.push(item);
-        if(count % pageRange === 0) {
-          currentData[count / pageRange -1] = innerArr;
-          innerArr = [];
-        }
-        count++;
+        arr.push(item);
       };
     });
   }
   else {
-    data.map((item) => {
-      innerArr.push(item);
-      if(count % pageRange === 0) {
-        currentData[count / pageRange -1] = innerArr;
-        innerArr = [];
-      }
-      count++;
-    })
+    arr = data;
   }
-  if(innerArr.length!==0) {
-    currentData[Math.ceil(count/pageRange -1)] = innerArr;
+  arr.map((item) => {
+    innerArr.push(item);
+    if (count % pageRange === 0) {
+      currentData[count / pageRange - 1] = innerArr;
+      innerArr = [];
+    }
+    count++;
+  })
+  if (innerArr.length !== 0) {
+    currentData[Math.ceil(count / pageRange - 1)] = innerArr;
   }
-  pageCounts = currentData.length;
 }
 
 const makeFoodHtml = (arr) => {
@@ -239,7 +228,7 @@ const setDropdowns = (e) => {
     currentDistrict = '';
     currentPage = 1;
     filterFood();
-    elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
+    elementContent.innerHTML = makeFoodHtml(currentData[currentPage - 1]);
     elementPages.innerHTML = makePaginationHtml();
     elementDistrict.innerHTML = makeDropdownHtml('Town');
   }
@@ -247,16 +236,21 @@ const setDropdowns = (e) => {
     currentDistrict = elementDistrict.value;
     currentPage = 1;
     filterFood();
-    elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
+    elementContent.innerHTML = makeFoodHtml(currentData[currentPage - 1]);
     elementPages.innerHTML = makePaginationHtml();
   }
 }
 
 const setClickIcons = (e) => {
-  elementIcons.children[mode].classList.remove('js-text-dark');
+  if (e.target.nodeName !== 'I') {
+    return;
+  }
+  let currentElement = elementIcons.children[mode].children[0];
+  currentElement.classList.remove('js-text-dark');
   mode = parseInt(e.target.dataset.mode);
-  elementIcons.children[mode].classList.add('js-text-dark');
-  elementContent.innerHTML = makeFoodHtml(currentData[currentPage-1]);
+  let latestElement = elementIcons.children[mode].children[0];
+  latestElement.classList.add('js-text-dark');
+  elementContent.innerHTML = makeFoodHtml(currentData[currentPage - 1]);
 };
 
 init();

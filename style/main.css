@@ -376,8 +376,11 @@ a {
 }
 
 /* Module Icon */
-.fas {
+.viewmode__btn {
+  all: unset;
   padding-left: 10px;
+}
+.fas {
   color:#666;
   cursor: pointer;
 }
