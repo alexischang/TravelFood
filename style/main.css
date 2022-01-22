@@ -78,7 +78,8 @@ a {
 }
 
 /* Module food */
-.food {
+.list,
+.card {
   display: flex;
   flex-wrap: wrap;
   margin-top: 25px;
@@ -110,21 +111,27 @@ a {
   overflow: hidden;
 }
 
-.list__imgContainer::before {
+.list__imgContainer::after {
   content: '';
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba( 0, 0, 0, .3);
+  background-color: #000;
+  opacity: .3;
+  transition: opacity 1s ease-out;
+}
+.list-transition .list__img {
+  transition: all 1s ease-out;
+}
+
+.list__item:hover .list__imgContainer::after {
+  opacity: 0;
 }
 
 .list__item:hover .list__img {
   transform: scale(1.3, 1.3);
-}
-
-.food-transition .list__img {
-  transition: all 1s ease-out;
 }
 
 .list__restaurant {
@@ -164,7 +171,7 @@ a {
 }
 
 /* Module table */
-.table {
+.table__container {
   width: 100%;
   border-collapse: collapse;
 }
@@ -236,8 +243,8 @@ a {
   overflow: hidden;
 }
 
-.food-transition .card__imgContainer,
-.food-transition .card__desc {
+.card-transition .card__imgContainer,
+.card-transition .card__desc {
   transition: all 1s ease-out;
 }
 
@@ -435,7 +442,7 @@ a {
     margin-bottom: 10px;
   }
 
-  .table__container {
+  .table {
     overflow-x: auto;
     white-space: nowrap;
   }

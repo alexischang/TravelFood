@@ -58,19 +58,18 @@ const makePaginationHtml = (str = '') => {
 }
 
 const setPages = () => {
-  elementBtns = [...elementPages.querySelectorAll('.btn')];
-  elementBtns.map((item, index) => {
-    item.addEventListener('click', () => {
-      if (index + 1 === currentPage) {
-        return;
-      }
-      elementBtns[currentPage - 1].classList.remove('js-active');
-      currentPage = index + 1;
-      elementBtns[currentPage - 1].classList.add('js-active');
-      elementContent.innerHTML = setFood();
-      elementCurrentPage.textContent = currentPage;
-    })
-  })
+  elementPages.addEventListener('click', setClickPages);
+}
+
+const setClickPages = (e) => {
+  if (parseInt(e.target.innerText) === currentPage) {
+    return;
+  }
+  elementPages.children[currentPage - 1].classList.remove('js-active');
+  currentPage = parseInt(e.target.innerText);
+  elementPages.children[currentPage - 1].classList.add('js-active');
+  elementContent.innerHTML = setFood();
+  elementCurrentPage.textContent = currentPage;
 }
 
 const setFood = (arr = []) => {
@@ -124,9 +123,9 @@ const makeFoodHtml = (arr) => {
   }
 }
 
-const makeTableHtml = (arr, str='') => {
+const makeTableHtml = (arr, str = '') => {
   arr.map((item, index) => {
-    let id = (currentPage-1)*10 + index + 1;
+    let id = (currentPage - 1) * 10 + index + 1;
     str += `
       <tr class="table__item">
         <td class="table__id">${id}</td>
@@ -134,28 +133,30 @@ const makeTableHtml = (arr, str='') => {
         <td class="table__district">${item.Town}</td>
         <td class="table__restaurant">${item.Name}</td>
         <td class="table__address" title="${item.Address}">
-          ${item.Address.length > 23 
-            ? item.Address.substring(0, 23)+'...'
-            : item.Address}
+          ${item.Address.length > 23
+        ? item.Address.substring(0, 23) + '...'
+        : item.Address}
         </td>
       </tr>`;
   });
   return `
-  <div class="table__container">
-  <table class="table" id="Table">
-  <thead class="table__head">
-    <tr class="table__headList">
-      <th class="table__headItem">編號</th>
-      <th class="table__headItem">行政區</th>
-      <th class="table__headItem">鄉鎮區</th>
-      <th class="table__headItem">商家</th>
-      <th class="table__headItem">地址</th>
-    </tr>
-  </thead>
-  <tbody class="table__body">${str}</tbody></table></div>`;
+    <div class="table">
+      <table class="table__container" id="Table">
+        <thead class="table__head">
+          <tr class="table__headList">
+            <th class="table__headItem">編號</th>
+            <th class="table__headItem">行政區</th>
+            <th class="table__headItem">鄉鎮區</th>
+            <th class="table__headItem">商家</th>
+            <th class="table__headItem">地址</th>
+          </tr>
+        </thead>
+        <tbody class="table__body">${str}</tbody>
+      </table>
+    </div>`;
 }
 
-const makeListHtml = (arr, str='') => {
+const makeListHtml = (arr, str = '') => {
   arr.map((item) => {
     str += `
       <li class="list__item">
@@ -176,10 +177,10 @@ const makeListHtml = (arr, str='') => {
         ${item.Url && `</a>`}
       </li>`;
   });
-  return `<ul class="food food-transition" id="Food">${str}</ul>`;
+  return `<ul class="list list-transition" id="Food">${str}</ul>`;
 }
 
-const makeCardHtml = (arr, str='') => {
+const makeCardHtml = (arr, str = '') => {
   arr.map((item) => {
     str += `
       <li class="card__item">
@@ -200,7 +201,7 @@ const makeCardHtml = (arr, str='') => {
         <div>
       </li>`;
   });
-  return `<ul class="food food-transition row" id="Food">${str}</ul>`;
+  return `<ul class="card card-transition row" id="Food">${str}</ul>`;
 }
 
 const getDropdowns = (keyword, arr) => {
@@ -256,15 +257,14 @@ const setDropdowns = (e) => {
 }
 
 const setIcons = () => {
-  elementAllIcons = [...elementIcons.querySelectorAll('.fas')];
-  elementAllIcons.map((item, index) => {
-    item.addEventListener('click', (e) => {
-      elementAllIcons[mode].classList.remove('js-text-dark');
-      mode = index;
-      elementAllIcons[mode].classList.add('js-text-dark');
-      elementContent.innerHTML = setFood();
-    })
-  })
+  elementIcons.addEventListener('click', setClickIcons);
 }
+
+const setClickIcons = (e) => {
+  elementIcons.children[mode].classList.remove('js-text-dark');
+  mode = parseInt(e.target.dataset.mode);
+  elementIcons.children[mode].classList.add('js-text-dark');
+  elementContent.innerHTML = setFood();
+};
 
 init();
