@@ -61,7 +61,7 @@ const setClickPages = (e) => {
   elementCurrentPage.textContent = currentPage;
 }
 
-const filterFood = (arr = [], innerArr = [], count = 1) => {
+const filterFood = (arr = []) => {
   currentData = [];
   if (currentCity && currentDistrict) {
     data.map(item => {
@@ -80,17 +80,14 @@ const filterFood = (arr = [], innerArr = [], count = 1) => {
   else {
     arr = data;
   }
-  arr.map((item) => {
-    innerArr.push(item);
-    if (count % pageRange === 0) {
-      currentData[count / pageRange - 1] = innerArr;
-      innerArr = [];
+  // console.log(arr)
+  arr.map((item, i) => {
+    if( i % pageRange === 0) {
+      currentData.push([]);
     }
-    count++;
+    let index = Math.floor( i / pageRange);
+    currentData[index].push(item);
   })
-  if (innerArr.length !== 0) {
-    currentData[Math.ceil(count / pageRange - 1)] = innerArr;
-  }
 }
 
 const makeFoodHtml = (arr) => {
@@ -218,7 +215,7 @@ const makeDropdownHtml = (keyword, arr = []) => {
 const setEvent = () => {
   elementCity.addEventListener('change', setDropdowns);
   elementDistrict.addEventListener('change', setDropdowns);
-  elementIcons.addEventListener('click', setClickIcons);
+  elementIcons.addEventListener('click', setClickIcons, true);
   elementPages.addEventListener('click', setClickPages);
 }
 
@@ -242,14 +239,14 @@ const setDropdowns = (e) => {
 }
 
 const setClickIcons = (e) => {
-  if (e.target.nodeName !== 'I') {
+  if (e.target.nodeName !== 'BUTTON') {
     return;
   }
-  let currentElement = elementIcons.children[mode].children[0];
-  currentElement.classList.remove('js-text-dark');
+  // let currentElement = elementIcons.children[mode].children[0];
+  elementIcons.children[mode].classList.remove('js-text-dark');
   mode = parseInt(e.target.dataset.mode);
-  let latestElement = elementIcons.children[mode].children[0];
-  latestElement.classList.add('js-text-dark');
+  // let latestElement = elementIcons.children[mode].children[0];
+  elementIcons.children[mode].classList.add('js-text-dark');
   elementContent.innerHTML = makeFoodHtml(currentData[currentPage - 1]);
 };
 
