@@ -56,9 +56,34 @@ const setClickPages = (e) => {
   elementPages.children[currentPage - 1].classList.remove('js-active');
   currentPage = parseInt(e.target.dataset.index);
   elementPages.children[currentPage - 1].classList.add('js-active');
-  elementContent.innerHTML = makeFoodHtml(filterFood()[currentPage - 1]);
+  elementContent.innerHTML = makeFoodHtml(singleton.getInstance().getArr()[currentPage - 1]);
   elementCurrentPage.textContent = currentPage;
 }
+
+const singleton = (() => {
+  let instance;
+  const init = () => {
+    let arr;
+    const setArr = (arr) => {
+      this.arr = arr;
+    }
+    const getArr = () => {
+      return this.arr;
+    }
+    return {
+      setArr: setArr,
+      getArr: getArr
+    };
+  };
+  return {
+    getInstance: () => {
+      if (!instance) {
+        instance = init();
+      }
+      return instance;
+    }
+  };
+})();
 
 const filterFood = (arr = []) => {
   if (currentCity && currentDistrict) {
@@ -75,13 +100,14 @@ const filterFood = (arr = []) => {
 
 const sortFood = (arr, result = []) => {
   arr.map((item, i) => {
-    if( i % pageRange === 0) {
+    if (i % pageRange === 0) {
       result.push([]);
     }
-    let index = Math.floor( i / pageRange);
+    let index = Math.floor(i / pageRange);
     result[index].push(item);
   });
   dataCounts = result.length;
+  singleton.getInstance().setArr(result);
   return result;
 }
 
@@ -210,7 +236,7 @@ const makeDropdownHtml = (keyword, arr = []) => {
 const setEvent = () => {
   elementCity.addEventListener('change', setDropdowns);
   elementDistrict.addEventListener('change', setDropdowns);
-  elementIcons.addEventListener('click', setClickIcons, true);
+  elementIcons.addEventListener('click', setClickIcons);
   elementPages.addEventListener('click', setClickPages);
 }
 
