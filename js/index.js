@@ -64,23 +64,14 @@ const setClickPages = (e) => {
 const filterFood = (arr = []) => {
   currentData = [];
   if (currentCity && currentDistrict) {
-    data.map(item => {
-      if (item.Town === currentDistrict) {
-        arr.push(item);
-      };
-    });
+    arr = data.filter(item => item.City === currentCity).filter(item => item.Town === currentDistrict);
   }
   else if (currentCity) {
-    data.map(item => {
-      if (item.City === currentCity) {
-        arr.push(item);
-      };
-    });
+    arr = data.filter(item => item.City === currentCity);
   }
   else {
     arr = data;
   }
-  // console.log(arr)
   arr.map((item, i) => {
     if( i % pageRange === 0) {
       currentData.push([]);
@@ -242,10 +233,8 @@ const setClickIcons = (e) => {
   if (e.target.nodeName !== 'BUTTON') {
     return;
   }
-  // let currentElement = elementIcons.children[mode].children[0];
   elementIcons.children[mode].classList.remove('js-text-dark');
   mode = parseInt(e.target.dataset.mode);
-  // let latestElement = elementIcons.children[mode].children[0];
   elementIcons.children[mode].classList.add('js-text-dark');
   elementContent.innerHTML = makeFoodHtml(currentData[currentPage - 1]);
 };

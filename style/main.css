@@ -370,6 +370,7 @@ a {
   height: 100%;
 }
 
+
 .box__img--sticky {
   position: sticky;
   top:0;
@@ -379,10 +380,12 @@ a {
 .viewmode__btn {
   all: unset;
   padding-left: 10px;
+  cursor: pointer;
 }
 .fas {
   color:#666;
-  cursor: pointer;
+  pointer-events: none;
+  
 }
 
 /* Module footer */
