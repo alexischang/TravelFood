@@ -20,6 +20,8 @@ const init = async () => {
   renderData();
   setEvent();
   window.addEventListener("message", function (event) {
+    console.log(event);
+    console.log(event.origin);
     if (event.origin !== "http://10.66.249.45:8078/") return;
     console.log(event.data);
   });
