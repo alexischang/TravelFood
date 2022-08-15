@@ -19,6 +19,7 @@ const init = async () => {
   await getData();
   renderData();
   setEvent();
+  console.log(localStorage.getItem('TWCACertIdxRef'));
 }
 
 const getData = async () => {
