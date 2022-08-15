@@ -19,7 +19,10 @@ const init = async () => {
   await getData();
   renderData();
   setEvent();
-  console.log(localStorage.getItem('TWCACertIdxRef'));
+  window.addEventListener("message", function (event) {
+    if (event.origin !== "http://10.66.249.45:8078/") return;
+    console.log(event.data);
+  });
 }
 
 const getData = async () => {
