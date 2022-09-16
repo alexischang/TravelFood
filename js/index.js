@@ -1,277 +1,299 @@
-let data = [],
-  dataCounts,
-  mode = 0,
-  currentPage = 1,
-  pageRange = 10,
-  currentCity = '',
-  currentDistrict = '';
+const selectElements = [...document.querySelectorAll('.checkboxInput')];
+	let agree = document.querySelector('#agree_lending');
+	let disagree = document.querySelector('#disagree_lending');
 
-const url = 'https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx',
-  elementCity = document.querySelector('#City'),
-  elementDistrict = document.querySelector('#District'),
-  elementContent = document.querySelector('#Content'),
-  elementPages = document.querySelector('#Pages'),
-  elementCurrentPage = document.querySelector('#CurrentPage'),
-  elementTotalPage = document.querySelector('#TotalPage'),
-  elementIcons = document.querySelector('#Icon');
+	selectElements.map((item, index) => {
+		item.addEventListener('change', (e) => {
+			item.setAttribute('value', e.target.value);
+		});
+	})
 
-const init = async () => {
-  await getData();
-  renderData();
-  setEvent();
-  console.log(localStorage.getItem('TWCACertIdxRef'));
-  window.addEventListener("message", function (event) {
-    console.log(event);
-    console.log(event.origin);
-    if (event.origin !== "http://10.66.249.45:8078/") return;
-    console.log(event.data);
-  });
-}
+agree.addEventListener('change', (e) => {
+		console.log('agree')
+		if (agree.checked) {
+			selectElements.map((elem) => elem.removeAttribute('disabled'));
+		}
+	})
+	disagree.addEventListener('change', (e) => {
+		console.log('disagree')
+		if(disagree.checked) {
+			selectElements.map((elem) => elem.setAttribute('disabled', 'disabled'));
+		}
+	})
+// let data = [],
+//   dataCounts,
+//   mode = 0,
+//   currentPage = 1,
+//   pageRange = 10,
+//   currentCity = '',
+//   currentDistrict = '';
 
-const getData = async () => {
-  try {
-    const res = await fetch(url);
-    data = await res.json();
-  }
-  catch (err) {
-    console.log(err);
-  }
-}
+// const url = 'https://data.coa.gov.tw/Service/OpenData/ODwsv/ODwsvTravelFood.aspx',
+//   elementCity = document.querySelector('#City'),
+//   elementDistrict = document.querySelector('#District'),
+//   elementContent = document.querySelector('#Content'),
+//   elementPages = document.querySelector('#Pages'),
+//   elementCurrentPage = document.querySelector('#CurrentPage'),
+//   elementTotalPage = document.querySelector('#TotalPage'),
+//   elementIcons = document.querySelector('#Icon');
 
-const renderData = () => {
-  elementContent.innerHTML = makeFoodHtml(filterFood()[currentPage - 1]);
-  elementCity.innerHTML = makeDropdownHtml('City');
-  elementPages.innerHTML = makePaginationHtml();
-  document.querySelector('#Loading').classList.add('js-hidden');
-}
+// const init = async () => {
+//   await getData();
+//   renderData();
+//   setEvent();
+//   console.log(localStorage.getItem('TWCACertIdxRef'));
+//   window.addEventListener("message", function (event) {
+//     console.log(event);
+//     console.log(event.origin);
+//     if (event.origin !== "http://10.66.249.45:8078/") return;
+//     console.log(event.data);
+//   });
+// }
 
-const makePaginationHtml = (str = '') => {
-  for (let i = 0; i < dataCounts; i++) {
-    str += currentPage === i + 1
-      ? `<button class="btn js-active" type="button" data-index=${i + 1}>${i + 1}</button>`
-      : `<button class="btn" type="button" data-index=${i + 1}>${i + 1}</button>`;
-  };
-  elementCurrentPage.textContent = currentPage;
-  elementTotalPage.textContent = `/${dataCounts}`;
-  return str;
-}
+// const getData = async () => {
+//   try {
+//     const res = await fetch(url);
+//     data = await res.json();
+//   }
+//   catch (err) {
+//     console.log(err);
+//   }
+// }
 
-const setClickPages = (e) => {
-  if (e.target.nodeName !== 'BUTTON' || parseInt(e.target.dataset.index) === currentPage) {
-    return;
-  }
-  elementPages.children[currentPage - 1].classList.remove('js-active');
-  currentPage = parseInt(e.target.dataset.index);
-  elementPages.children[currentPage - 1].classList.add('js-active');
-  elementContent.innerHTML = makeFoodHtml(singleton.getInstance().getArr()[currentPage - 1]);
-  elementCurrentPage.textContent = currentPage;
-}
+// const renderData = () => {
+//   elementContent.innerHTML = makeFoodHtml(filterFood()[currentPage - 1]);
+//   elementCity.innerHTML = makeDropdownHtml('City');
+//   elementPages.innerHTML = makePaginationHtml();
+//   document.querySelector('#Loading').classList.add('js-hidden');
+// }
 
-const singleton = (() => {
-  let instance;
-  const init = () => {
-    let arr;
-    const setArr = (arr) => {
-      this.arr = arr;
-    }
-    const getArr = () => {
-      return this.arr;
-    }
-    return {
-      setArr: setArr,
-      getArr: getArr
-    };
-  };
-  return {
-    getInstance: () => {
-      if (!instance) {
-        instance = init();
-      }
-      return instance;
-    }
-  };
-})();
+// const makePaginationHtml = (str = '') => {
+//   for (let i = 0; i < dataCounts; i++) {
+//     str += currentPage === i + 1
+//       ? `<button class="btn js-active" type="button" data-index=${i + 1}>${i + 1}</button>`
+//       : `<button class="btn" type="button" data-index=${i + 1}>${i + 1}</button>`;
+//   };
+//   elementCurrentPage.textContent = currentPage;
+//   elementTotalPage.textContent = `/${dataCounts}`;
+//   return str;
+// }
 
-const filterFood = (arr = []) => {
-  if (currentCity && currentDistrict) {
-    arr = data.filter(item => item.City === currentCity).filter(item => item.Town === currentDistrict);
-  }
-  else if (currentCity) {
-    arr = data.filter(item => item.City === currentCity);
-  }
-  else {
-    arr = data;
-  }
-  return sortFood(arr);
-}
+// const setClickPages = (e) => {
+//   if (e.target.nodeName !== 'BUTTON' || parseInt(e.target.dataset.index) === currentPage) {
+//     return;
+//   }
+//   elementPages.children[currentPage - 1].classList.remove('js-active');
+//   currentPage = parseInt(e.target.dataset.index);
+//   elementPages.children[currentPage - 1].classList.add('js-active');
+//   elementContent.innerHTML = makeFoodHtml(singleton.getInstance().getArr()[currentPage - 1]);
+//   elementCurrentPage.textContent = currentPage;
+// }
 
-const sortFood = (arr, result = []) => {
-  arr.map((item, i) => {
-    if (i % pageRange === 0) {
-      result.push([]);
-    }
-    let index = Math.floor(i / pageRange);
-    result[index].push(item);
-  });
-  dataCounts = result.length;
-  singleton.getInstance().setArr(result);
-  return result;
-}
+// const singleton = (() => {
+//   let instance;
+//   const init = () => {
+//     let arr;
+//     const setArr = (arr) => {
+//       this.arr = arr;
+//     }
+//     const getArr = () => {
+//       return this.arr;
+//     }
+//     return {
+//       setArr: setArr,
+//       getArr: getArr
+//     };
+//   };
+//   return {
+//     getInstance: () => {
+//       if (!instance) {
+//         instance = init();
+//       }
+//       return instance;
+//     }
+//   };
+// })();
 
-const makeFoodHtml = (arr) => {
-  switch (mode) {
-    case 0:
-      return makeListHtml(arr);
-    case 1:
-      return makeTableHtml(arr);
-    case 2:
-      return makeCardHtml(arr);
-    default:
-      return makeListHtml(arr);
-  }
-}
+// const filterFood = (arr = []) => {
+//   if (currentCity && currentDistrict) {
+//     arr = data.filter(item => item.City === currentCity).filter(item => item.Town === currentDistrict);
+//   }
+//   else if (currentCity) {
+//     arr = data.filter(item => item.City === currentCity);
+//   }
+//   else {
+//     arr = data;
+//   }
+//   return sortFood(arr);
+// }
 
-const makeTableHtml = (arr, str = '') => {
-  arr.map((item, index) => {
-    let id = (currentPage - 1) * 10 + index + 1;
-    str += `
-      <tr class="table__item">
-        <td class="table__id">${id}</td>
-        <td class="table__tag">${item.City}</td>
-        <td class="table__district">${item.Town}</td>
-        <td class="table__restaurant">${item.Name}</td>
-        <td class="table__address" title="${item.Address}">
-          ${item.Address.length > 23
-        ? item.Address.substring(0, 23) + '...'
-        : item.Address}
-        </td>
-      </tr>`;
-  });
-  return `
-    <div class="table">
-      <table class="table__container">
-        <thead class="table__head">
-          <tr class="table__headList">
-            <th class="table__headItem">編號</th>
-            <th class="table__headItem">行政區</th>
-            <th class="table__headItem">鄉鎮區</th>
-            <th class="table__headItem">商家</th>
-            <th class="table__headItem">地址</th>
-          </tr>
-        </thead>
-        <tbody class="table__body">${str}</tbody>
-      </table>
-    </div>`;
-}
+// const sortFood = (arr, result = []) => {
+//   arr.map((item, i) => {
+//     if (i % pageRange === 0) {
+//       result.push([]);
+//     }
+//     let index = Math.floor(i / pageRange);
+//     result[index].push(item);
+//   });
+//   dataCounts = result.length;
+//   singleton.getInstance().setArr(result);
+//   return result;
+// }
 
-const makeListHtml = (arr, str = '') => {
-  arr.map((item) => {
-    str += `
-      <li class="list__item">
-        ${item?.Url && `<a class="list__link" href="${item.Url}" target="_blank">`}
-          <div class="list__innerBox">
-            <div class="list__desc">
-              <h2 class="list__restaurant">${item.Name}</h2>
-              <div class="list__location">
-                <span class="list__tag">${item.City}</span>
-                <span class="list__district">${item.Town}</span>
-              </div>
-              <p class="list__details">${item.FoodFeature.substring(0, 100)}...</p>
-            </div>
-            <div class="list__imgContainer">
-              <img class="list__img img-resp" src=${item.PicURL} alt=${item.Name} width="248" height="144" loading="lazy">
-            </div>
-          </div>
-        ${item.Url && `</a>`}
-      </li>`;
-  });
-  return `<ul class="list list-transition">${str}</ul>`;
-}
+// const makeFoodHtml = (arr) => {
+//   switch (mode) {
+//     case 0:
+//       return makeListHtml(arr);
+//     case 1:
+//       return makeTableHtml(arr);
+//     case 2:
+//       return makeCardHtml(arr);
+//     default:
+//       return makeListHtml(arr);
+//   }
+// }
 
-const makeCardHtml = (arr, str = '') => {
-  arr.map((item) => {
-    str += `
-      <li class="card__item">
-        <div class="card__gutter">
-          ${item?.Url && `<a class="card__link" href="${item.Url}" target="_blank">`}
-            <div class="card__desc">
-              <div class="card__location">
-                <span class="card__tag">${item.City}</span>
-                <span class="card__district">${item.Town}</span>
-              </div>
-              <h2 class="card__restaurant">${item.Name}</h2>
-              <p class="card__details">${item.FoodFeature.substring(0, 43)}...</p>
-            </div>
-            <div class="card__imgContainer">
-              <img class="card__img img-resp" src=${item.PicURL} alt=${item.Name} loading="lazy">  
-            </div>
-          ${item.Url && `</a>`}
-        <div>
-      </li>`;
-  });
-  return `<ul class="card card-transition row">${str}</ul>`;
-}
+// const makeTableHtml = (arr, str = '') => {
+//   arr.map((item, index) => {
+//     let id = (currentPage - 1) * 10 + index + 1;
+//     str += `
+//       <tr class="table__item">
+//         <td class="table__id">${id}</td>
+//         <td class="table__tag">${item.City}</td>
+//         <td class="table__district">${item.Town}</td>
+//         <td class="table__restaurant">${item.Name}</td>
+//         <td class="table__address" title="${item.Address}">
+//           ${item.Address.length > 23
+//         ? item.Address.substring(0, 23) + '...'
+//         : item.Address}
+//         </td>
+//       </tr>`;
+//   });
+//   return `
+//     <div class="table">
+//       <table class="table__container">
+//         <thead class="table__head">
+//           <tr class="table__headList">
+//             <th class="table__headItem">編號</th>
+//             <th class="table__headItem">行政區</th>
+//             <th class="table__headItem">鄉鎮區</th>
+//             <th class="table__headItem">商家</th>
+//             <th class="table__headItem">地址</th>
+//           </tr>
+//         </thead>
+//         <tbody class="table__body">${str}</tbody>
+//       </table>
+//     </div>`;
+// }
 
-const getDropdowns = (keyword, arr) => {
-  keyword === 'City'
-    ? data.forEach(item => {
-      if (!arr.includes(item.City)) {
-        arr.push(item.City);
-      }
-    })
-    : data.forEach(item => {
-      if (currentCity === item.City) {
-        if (!arr.includes(item.Town)) {
-          arr.push(item.Town);
-        }
-      }
-    })
-  return arr;
-}
+// const makeListHtml = (arr, str = '') => {
+//   arr.map((item) => {
+//     str += `
+//       <li class="list__item">
+//         ${item?.Url && `<a class="list__link" href="${item.Url}" target="_blank">`}
+//           <div class="list__innerBox">
+//             <div class="list__desc">
+//               <h2 class="list__restaurant">${item.Name}</h2>
+//               <div class="list__location">
+//                 <span class="list__tag">${item.City}</span>
+//                 <span class="list__district">${item.Town}</span>
+//               </div>
+//               <p class="list__details">${item.FoodFeature.substring(0, 100)}...</p>
+//             </div>
+//             <div class="list__imgContainer">
+//               <img class="list__img img-resp" src=${item.PicURL} alt=${item.Name} width="248" height="144" loading="lazy">
+//             </div>
+//           </div>
+//         ${item.Url && `</a>`}
+//       </li>`;
+//   });
+//   return `<ul class="list list-transition">${str}</ul>`;
+// }
 
-const makeDropdownHtml = (keyword, arr = []) => {
-  arr = getDropdowns(keyword, arr);
-  let dropdownStr = keyword === 'City'
-    ? elementCity.innerHTML
-    : '<option class="filter__dropdownItem" value="" id="default-option" selected disabled>請選擇鄉鎮區...</option>';
-  arr.map(item => {
-    dropdownStr += `<option class="filter__dropdownItem" value="${item}">${item}</option>`;
-  })
-  return dropdownStr;
-}
+// const makeCardHtml = (arr, str = '') => {
+//   arr.map((item) => {
+//     str += `
+//       <li class="card__item">
+//         <div class="card__gutter">
+//           ${item?.Url && `<a class="card__link" href="${item.Url}" target="_blank">`}
+//             <div class="card__desc">
+//               <div class="card__location">
+//                 <span class="card__tag">${item.City}</span>
+//                 <span class="card__district">${item.Town}</span>
+//               </div>
+//               <h2 class="card__restaurant">${item.Name}</h2>
+//               <p class="card__details">${item.FoodFeature.substring(0, 43)}...</p>
+//             </div>
+//             <div class="card__imgContainer">
+//               <img class="card__img img-resp" src=${item.PicURL} alt=${item.Name} loading="lazy">  
+//             </div>
+//           ${item.Url && `</a>`}
+//         <div>
+//       </li>`;
+//   });
+//   return `<ul class="card card-transition row">${str}</ul>`;
+// }
 
-const setEvent = () => {
-  elementCity.addEventListener('change', setDropdowns);
-  elementDistrict.addEventListener('change', setDropdowns);
-  elementIcons.addEventListener('click', setClickIcons);
-  elementPages.addEventListener('click', setClickPages);
-}
+// const getDropdowns = (keyword, arr) => {
+//   keyword === 'City'
+//     ? data.forEach(item => {
+//       if (!arr.includes(item.City)) {
+//         arr.push(item.City);
+//       }
+//     })
+//     : data.forEach(item => {
+//       if (currentCity === item.City) {
+//         if (!arr.includes(item.Town)) {
+//           arr.push(item.Town);
+//         }
+//       }
+//     })
+//   return arr;
+// }
 
-const setDropdowns = (e) => {
-  if (e.target.id === 'City') {
-    currentCity = elementCity.value;
-    currentDistrict = '';
-    currentPage = 1;
-    elementContent.innerHTML = makeFoodHtml(filterFood()[currentPage - 1]);
-    elementPages.innerHTML = makePaginationHtml();
-    elementDistrict.innerHTML = makeDropdownHtml('Town');
-  }
-  else {
-    currentDistrict = elementDistrict.value;
-    currentPage = 1;
-    elementContent.innerHTML = makeFoodHtml(filterFood()[currentPage - 1]);
-    elementPages.innerHTML = makePaginationHtml();
-  }
-}
+// const makeDropdownHtml = (keyword, arr = []) => {
+//   arr = getDropdowns(keyword, arr);
+//   let dropdownStr = keyword === 'City'
+//     ? elementCity.innerHTML
+//     : '<option class="filter__dropdownItem" value="" id="default-option" selected disabled>請選擇鄉鎮區...</option>';
+//   arr.map(item => {
+//     dropdownStr += `<option class="filter__dropdownItem" value="${item}">${item}</option>`;
+//   })
+//   return dropdownStr;
+// }
 
-const setClickIcons = (e) => {
-  if (e.target.nodeName !== 'BUTTON') {
-    return;
-  }
-  elementIcons.children[mode].classList.remove('js-text-dark');
-  mode = parseInt(e.target.dataset.mode);
-  elementIcons.children[mode].classList.add('js-text-dark');
-  elementContent.innerHTML = makeFoodHtml(filterFood()[currentPage - 1]);
-};
+// const setEvent = () => {
+//   elementCity.addEventListener('change', setDropdowns);
+//   elementDistrict.addEventListener('change', setDropdowns);
+//   elementIcons.addEventListener('click', setClickIcons);
+//   elementPages.addEventListener('click', setClickPages);
+// }
 
-init();
+// const setDropdowns = (e) => {
+//   if (e.target.id === 'City') {
+//     currentCity = elementCity.value;
+//     currentDistrict = '';
+//     currentPage = 1;
+//     elementContent.innerHTML = makeFoodHtml(filterFood()[currentPage - 1]);
+//     elementPages.innerHTML = makePaginationHtml();
+//     elementDistrict.innerHTML = makeDropdownHtml('Town');
+//   }
+//   else {
+//     currentDistrict = elementDistrict.value;
+//     currentPage = 1;
+//     elementContent.innerHTML = makeFoodHtml(filterFood()[currentPage - 1]);
+//     elementPages.innerHTML = makePaginationHtml();
+//   }
+// }
+
+// const setClickIcons = (e) => {
+//   if (e.target.nodeName !== 'BUTTON') {
+//     return;
+//   }
+//   elementIcons.children[mode].classList.remove('js-text-dark');
+//   mode = parseInt(e.target.dataset.mode);
+//   elementIcons.children[mode].classList.add('js-text-dark');
+//   elementContent.innerHTML = makeFoodHtml(filterFood()[currentPage - 1]);
+// };
+
+// init();
