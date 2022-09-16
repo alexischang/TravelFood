@@ -15,7 +15,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/fontawesome.css"
     integrity="sha384-eHoocPgXsiuZh+Yy6+7DsKAerLXyJmu2Hadh4QYyt+8v86geixVYwFqUvMU8X90l" crossorigin="anonymous" />
-  <script defer src="./js/index.js"></script>
+<!--   <script defer src="./js/index.js"></script> -->
 
 </head>
 
@@ -112,5 +112,31 @@
     </div>
   </div> -->
 </body>
+
+	<script>
+	const selectElements = [...document.querySelectorAll('.checkboxInput')];
+	let agree = document.querySelector('#agree_lending');
+	let disagree = document.querySelector('#disagree_lending');
+
+	selectElements.map((item, index) => {
+		item.addEventListener('change', (e) => {
+			item.setAttribute('value', e.target.value);
+		});
+	})
+
+
+	agree.addEventListener('change', (e) => {
+		console.log('agree')
+		if (agree.checked) {
+			selectElements.map((elem) => elem.removeAttribute('disabled'));
+		}
+	})
+	disagree.addEventListener('change', (e) => {
+		console.log('disagree')
+		if(disagree.checked) {
+			selectElements.map((elem) => elem.setAttribute('disabled', 'disabled'));
+		}
+	})
+</script>
 
 </html>
